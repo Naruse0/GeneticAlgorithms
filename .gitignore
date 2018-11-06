@@ -33,3 +33,7 @@
 Debug
 Release
 *.user
+*.ipch
+*.suo
+/.vs/GeneticAlgorithms/v15/Browse.VC.opendb
+/.vs/GeneticAlgorithms/v15/Browse.VC.db
