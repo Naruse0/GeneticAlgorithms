@@ -140,17 +140,42 @@ void M_crossover()
 	int				c_pos;
 	double			r;
 
+	int				indices[POP_SIZE];	// 処理待ちのインデックス配列(-1で処理済み)
+
+	// インデックス配列を初期化
+	for (i = 0; i < POP_SIZE; i++)
+	{
+		indices[i] = i;
+	}
+
+
 	for (i = 0; i < (POP_SIZE - 1); i += 2)
 	{
 		// 交叉させるかどうかを乱数から判定する
 		r = (static_cast<double>(rand() % 10001) / 10000.0);
 		if (r <= CROS_RATE)
 		{
+			// 処理対象のインデックスを決める
+			int index1;
+			int index2;
+			do
+			{
+				index1 = indices[rand() % POP_SIZE];
+			} while (index1 == -1);
+			do
+			{
+				index2 = indices[rand() % POP_SIZE];
+			} while (index2 == -1 || index2 == index1);
+
+			// 処理済みとしてカウント
+			indices[index1] = -1;
+			indices[index2] = -1;
+
 			// 一度に交叉させる2つの遺伝子をワークにコピーする
 			for (j = 0; j < GENE_LENGTH; j++)
 			{
-				gene1[j] = g_Gene[i][j];
-				gene2[j] = g_Gene[i + 1][j];
+				gene1[j] = g_Gene[index1][j];
+				gene2[j] = g_Gene[index2][j];
 			}
 
 			// 乱数を用いて交叉位置を決定し、その値をc_posへ代入する
@@ -168,8 +193,8 @@ void M_crossover()
 			// 交叉した新しい遺伝子を遺伝子情報に上書きコピー
 			for (j = 0; j < GENE_LENGTH; j++)
 			{
-				g_Gene[i][j] = gene1[i];
-				g_Gene[i + 1][j] = gene2[i];
+				g_Gene[index1][j] = gene1[i];
+				g_Gene[index2][j] = gene2[i];
 			}
 		}
 	}
