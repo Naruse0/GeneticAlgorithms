@@ -13,7 +13,7 @@
 #define		GENE_LENGTH	(ITEM_NUM)		// 遺伝子のビット数
 
 #define		CROS_RATE	0.8f			// 交叉頻度
-#define		MUTE_RATE	0.1f			// 突然変異頻度
+#define		MUTE_RATE	0.0f			// 突然変異頻度
 
 #define		GENE_MAX	10				// 世代交代数
 
@@ -69,7 +69,7 @@ int calc_fitness_gene(int gene_no);
 //---- エントリポイント ---- 
 int main()
 {
-	int		i, j;
+	int		i, j, wk_value;
 	float	wk_weight, wk_volume;
 
 	// 初期化
@@ -83,7 +83,8 @@ int main()
 	initialize_pop_binary();
 
 	// 初期状態を表示
-
+	printf("---- 初期状態 ----\n");
+	check_result();
 	// 遺伝子集団の適応度を計算
 	calc_fitness_pop();
 
@@ -104,6 +105,7 @@ int main()
 	printf("最高遺伝子世代   = %3d\n", g_AllMaxFitnessGeneration);
 	printf("最高遺伝子[%2d]   = ", g_AllMaxFitnessIndex);
 
+	wk_value = 0;
 	wk_weight = 0;
 	wk_volume = 0;
 	for (i = 0; i < GENE_LENGTH; i++)
@@ -111,13 +113,16 @@ int main()
 		printf("%1d", g_AllMaxFitnessGene[i]);
 		if (g_AllMaxFitnessGene[i] == 1)
 		{
+			wk_value += g_DataValue[i];
 			wk_weight += g_DataWeight[i];
 			wk_volume += g_DataVolume[i];
 		}
 	}
 	printf("\n");
-	printf("総重量 = %f\n", wk_weight);
-	printf("総体積 = %f\n", wk_volume);
+	printf("\n");
+	printf("価値合計 = %d\n", wk_value);
+	printf("総重量   = %f\n", wk_weight);
+	printf("総体積   = %f\n", wk_volume);
 
 	// 終了処理
 	printf("Push Enter-key >> ");
@@ -223,8 +228,8 @@ void M_crossover()
 			// 交叉した新しい遺伝子を遺伝子情報に上書きコピー
 			for (j = 0; j < GENE_LENGTH; j++)
 			{
-				g_Gene[index1][j] = gene1[i];
-				g_Gene[index2][j] = gene2[i];
+				g_Gene[index1][j] = gene1[j];
+				g_Gene[index2][j] = gene2[j];
 			}
 		}
 	}
@@ -248,7 +253,8 @@ void M_mutation()
 				pos = rand() % GENE_LENGTH;
 
 				// 数値を反転（突然変異）
-				g_Gene[i][j] == 0 ? g_Gene[i][j] = 1 : g_Gene[i][j] = 0;
+				//g_Gene[i][pos] != 0 ? g_Gene[i][pos] = 0 : g_Gene[i][pos] = 1;
+				g_Gene[i][pos] = !g_Gene[i][pos];
 			}
 		}
 	}
